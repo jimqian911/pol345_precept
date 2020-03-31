@@ -2,7 +2,7 @@
 title: "POL 345 Precept Week 8: For loop"
 author: "Jing Qian"
 date: "2020/03/31"
-output: html_document
+output: rmarkdown::github_document
 ---
 
 Welcome! This document contains materials that would be helpful for week 8 of POL 345. Specifically, we will cover two important control structures in programming: *for loop* and *if statement*, as well as the *K-Means* algorithm. 
