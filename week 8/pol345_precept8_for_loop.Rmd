@@ -13,9 +13,9 @@ In this document, we will focus on the *for loop*.
 
 #### 1.1 Basic Idea of for loop
 
-A lot of times, you might want to repeat a specific block of code for each element in a vector, each row/column in a dataframe/matrix, etc. The *for loop* is a widely-used control structure to complete this kind of task without copy-and-paste the same chunk of code again and again. 
+A lot of times, you might want to repeat a specific block of code for each element in a vector, or each row/column in a dataframe/matrix, etc. The *for loop* is a widely-used control structure to complete this kind of task without copy-and-paste the same chunk of code again and again. 
 
-The basic syntax of for loop is as the following:
+The basic syntax of *for loop* is as the following:
 ```{r, eval=FALSE}
 for (val in sequence){
   statement
@@ -47,7 +47,7 @@ knitr::include_graphics("images/r-for-loop.jpg")
 
 #### 1.2 Examples of for loop in different cases
 
-In the example above, we loop over each element in `sequence` and also do some operations with that element. A common situation involving for loop is usually loop over a vector of *indices*, and use that to iteratively extract each element from another object. For example:
+In the example above, we loop over each element in `sequence` and also do some operations with that element. A common situation involving for loop is to loop over a vector of *indices*, and use that to iteratively extract each element from another object. For example:
 
 ```{r}
 y = c("A", "B", "C", "D")
