@@ -5,6 +5,8 @@ Jing Qian
 
 Welcome! This document contains materials that would be helpful for week 8 of POL 345. Specifically, we will cover two important control structures in programming: *for loop* and *if statement*, as well as the *K-Means* algorithm.
 
+In this document, we will focus on the *for loop*.
+
 ### 1. For loop[1]
 
 #### 1.1 Basic Idea of for loop
