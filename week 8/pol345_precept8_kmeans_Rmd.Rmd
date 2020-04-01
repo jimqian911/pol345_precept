@@ -7,26 +7,88 @@ output:
   html_document: default
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+Welcome! This document contains materials that would be helpful for week 8 of POL 345. Specifically, we will cover two important control structures in programming: *for loop* and *if statement*, as well as the *K-Means* algorithm. 
+
+In this document, we will focus on the *K-Means* algorithm.
+
+### 3. K-Means algorithm
+
+The *K-means* algorithm is one of many ways to do cluster analysis^[For a quick overview, see https://en.wikipedia.org/wiki/K-means_clustering]. We will not go to the details of the algorithm here, but rather focus on how to do *K-means* in R, and how to use the results from K-means. If you are interested, check out this visualization tool, which might help you better understand how the algorithm works: https://www.naftaliharris.com/blog/visualizing-k-means-clustering/.
+
+We will use the `resources.csv` dataset from precept exercise 7 for illustration. Please check the exercise out if you have not had the chance to do that yet. 
+
+```{r, echo = FALSE}
+resource = read.csv("data/resources.csv")
+res_NoNA = na.omit(resource[, c(3,4,5,7)])
+res_NoNA_standardized = scale(res_NoNA)
+set.seed(08540)
 ```
 
-## R Markdown
+Recall that `res_NoNA_standardized` is a subset of the original dataset that:
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+1. Contains four columns: regime, oil, logGDPcp, illit
+2. All rows with NA have been removed
+3. Each column has been standardized
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+We can use the `kmeans` function to cluster the dataset into 3 groups:
 
-```{r cars}
-summary(cars)
+```{r}
+km.3 = kmeans(res_NoNA_standardized, 
+              center = 3)
 ```
 
-## Including Plots
+By executing the code above, we have stored the results from K-means into the object `km.3`. This object contains various results from the algorithm, as shown below:
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+names(km.3)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+For now, we will only focus on two of them: `cluster` and `centers`. 
+
+- `cluster`: A vector of the same length as the number of rows of the dataset fed into the `kmeans` function. Each element indicates the final cluster assignment for the corresponding observation from the dataset. 
+- `centers`: A matrix of cluster centers. 
+
+The object `km.3` is a *list*, which is a very flexible way to store data, in the sense that each element of a list can be of any type (vector, matrix, data frame, or even a list). We will not go into the details of list object here. The only thing you need to know is that you can access the element of `km.3` by using the dollar sign `$`. 
+
+```{r}
+km.3.cluster = km.3$cluster 
+km.3.centers = km.3$centers
+```
+
+Here, we have extracted the `cluster` element from `km.3`, and store it in `km.3.cluster`, similarly for `km.3.centers`. 
+
+We can do a few things with `km.3.cluster`:
+
+1. For example, we can see how many observations get assigned to each of the 3 clusters:
+```{r}
+table(km.3.cluster)
+```
+
+  Here you can see that 167 observations are assigned to cluster 1, 32 observations to cluster 2, and 218 observations to cluster 3.
+
+2. We can also use it to subset the dataset by the cluster they are assigned to:
+
+```{r}
+#Subset of the dataset that only contains observations assigned to cluster 1
+res_NoNA_standardized.cluster1 = res_NoNA_standardized[km.3.cluster == 1, ]
+```
+
+3. We can also use it to plot observations in different colors, depending on their cluster assignment:
+
+```{r}
+plot(x = res_NoNA$logGDPcp,
+     y = res_NoNA$illit,
+     xlab = "GDP Per Capital (logged)",
+     ylab = "Illiteracy Rate",
+     col = km.3.cluster)
+```
+
+**Note**: The key idea is that, the length of `km.3.cluster` is the same as the number of rows of the dataset (`res.NoNA` or `res.NoNA.standardized`).
+
+In addition to the `cluster` element in the k-means result, the `centers` element reports the *centers* of each cluster:
+
+```{r}
+km.3.centers
+```
+
+Here, you can see the values of each variable for the three centers of clusters.  
