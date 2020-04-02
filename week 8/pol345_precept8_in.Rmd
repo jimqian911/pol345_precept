@@ -1,0 +1,46 @@
+---
+title: 'POL 345 Precept Week 8: in operator'
+author: "Jing Qian"
+date: "2020/04/01"
+output: pdf_document
+---
+
+This document provides a brief introduction to the `%in%` operation. 
+
+**1. Basic idea**
+
+Some times you might want to check whether a vector contains a certain element, and you can use the `%in%` operator to do that. For example:
+
+```{r}
+x = 1:100 #x is a vector of integers from 1 to 100
+#Say you want to check whether the number 55 is in x
+55 %in% x
+#As well as whether the number 200 is in x
+200 %in% x
+```
+
+As in the example above, the `%in%` operator will check whether the element on the left side of the operator is an element of the object (in anywhere) on the right side, and it returns `TRUE` if that's the case, `FALSE` otherwise.
+
+**2. Use a vector on the left side of the operator**
+
+You can also use a vector, instead of a single element, on the left side of the operator. In that case, it will returns a vector of logical values:
+
+```{r}
+x = 1:100
+y = c(1, 5, 200, -2, 33, 0)
+y %in% x
+```
+
+As in the example above, now the result from the operation `y %in% x` will also be a vector of logical values, with the same number of elements as the vector on the left side of the operator (`y`). Each element of the result tells you whether that element from `y` exists in `x`. We can see that the first two elements in `y` are indeed in `x` (1 and 5), while the 3rd and 4th elements in `y` are not in `x` (200 and -2).
+
+**3. Use result from `%in%` as index**
+
+What if you want the values, rather than indicators? Since the results from `%in%` will be of the same length as the object on the left side, we can use that to index the left-side object, and extract values:
+
+```{r}
+x = 1:100
+y = c(1, 5, 200, -2, 33, 0)
+y[y %in% x]
+```
+
+As in the example above, we use `y[y %in% x]` to find the values of `y` that are also in `x`. Remember that we can use a vector of logical values (of the same length) to index another vector, and we will then get the elements for which the index is `TRUE`. In this example, `y[y %in% x]` will find all the elements of `y` which are also in `x`, which are the 1st, 2nd, and the 5th. 
