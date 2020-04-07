@@ -1,0 +1,62 @@
+---
+title: "POL 345 Precept Week 9: Set Working Directory in R Markdown"
+author: "Jing Qian"
+date: "2020/03/31"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Welcome! In this note we will look into a problem that probably has made a lot of you into troubles time to time: the working directory in R Markdown. 
+
+Before we actually beings, here is a short answer: **You should never (or at least not encouraged) to change the working directory to another folder when working in R Markdown.** The main reason is that it is unnecessary if you have already keep your files organized. 
+
+### 1. What you should do when woking in R Markdown
+
+When you create a new Rmd file, and have saved it to a folder, the default working directory would be the folder where your .Rmd file locates. For example, this Rmd file is in the folder `"C:/Users/qianj/OneDrive - Princeton University/Princeton/Course/POL 345/pol345_precept"`, so you will see the same thing by using the `getwd()` command:
+
+```{r}
+getwd()
+```
+
+Let's say now you need to read a dataset stored in a .csv file. You are encouraged to put all your data files in a separate folder (say called "data"), which is under the **same folder** where you put your Rmd file. In this example, the .csv file should be saved in this folder: `"C:/Users/qianj/OneDrive - Princeton University/Princeton/Course/POL 345/pol345_precept/data"`
+
+If this is the case, you can simply read the data by using *relative path*, for example:
+
+```{r}
+congress = read.csv("data/congress.csv")
+```
+
+
+### 2. What if you use `setwd()` in R Markdown
+
+As we have learned during the first week, the code to change the working directory in R is `setwd()`. However, if you try to use this command in R Markdown to set working directory, you are likely to receive a warning message saying that:
+
+- "The working directory was changed to ... inside a notebook chunk. The working directory will be reset when the chnk is finished running. Use the knitr root.dir option in the setup chunk to change the working directory for notebook chunks."
+
+Let's take a minute to actually read this warning message. As it clearly states, you can change the working directory by using `setwd()`, but it will only be the case for that chunk. After you have run every line of codes in that chunk and move to another chunk, the working directory will by reset to the defauly one (see 1). 
+
+As in the example below, say you change the working directory to another folder, and want to read the `polls08.csv` file in that folder. You will still be able to do that if you *run the entire chunk*, or when you knit the Rmd file. But it won't work if you run these two lines of code separately, since the working directory will be reset after you have run the first line. 
+
+```{r}
+#change the working directory by setwd()
+setwd("C:/Users/qianj/OneDrive - Princeton University/Princeton/Course/POL 345/pol345_precept/week 8/data")
+polls08 = read.csv("polls08.csv")
+```
+
+
+
+
+Similarly, it will not work if you put the code wherer you want to read the dataset in another chunk, since the working directory is also reset. 
+```{r, eval=FALSE}
+#This will not work
+polls08 = read.csv("polls08.csv")
+```
+
+### 3. What if you really want to change the working directory in R Markdown
+
+If you really want to change the working directory (which should never happen), you can use a different line of code to do that in R Markdown, which is to put the following chunk at the beginning (i.e. it should be the first chunk) in your Rmd file:
+
+```{r setup, eval=FALSE}
+knitr::opts_knit$set(root.dir = "C:/Users/qianj/OneDrive - Princeton University/Princeton/Course/POL 345/pol345_precept/week 8/data")
+```
