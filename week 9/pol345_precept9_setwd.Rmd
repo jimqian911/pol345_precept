@@ -1,7 +1,7 @@
 ---
 title: "POL 345 Precept Week 9: Set Working Directory in R Markdown"
 author: "Jing Qian"
-date: "2020/03/31"
+date: "2020/04/06"
 output:
   pdf_document: default
   html_document: default
