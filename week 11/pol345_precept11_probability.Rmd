@@ -1,0 +1,209 @@
+---
+title: 'POL 345 Prececpt Week 11: Probability and Statistics'
+author: "Jing Qian"
+date: "2020/04/22"
+output:
+  pdf_document: default
+  html_document: default
+header-includes:
+  - \usepackage{xcolor}
+---
+
+Welcome! In this note, we will review important concepts in the slides *Probability and Statistics*, as well as how to calculate various values using R. 
+
+## 1. Concepts Related to Experiments
+
+- **Experiment**: activity for which the final state of affairs cannot be specified in advance, but for which a set containing all potential state of affairs is known
+    - Outcome of the experiment: final result, observation or measurement from the experiment
+- **Sample Space** ($\Omega$): A set containing all possible outcomes of a given experiment.
+- **Event**: An event is any collection of possible outcomes of an experiment. This is, an event is any subset of $\Omega$, including $\Omega$ itself.
+
+## 2. Probability
+
+- **Classical definition of probability**
+    - Let $\Omega$ be the finite sample space of an experiment having $N(\Omega)$ *equally likely* outcomes, and let $A \subset \Omega$ be an event containing $N(A)$ elements. Then the probability of the event $A$, $P(A)$, is given by:
+
+\begin{equation}
+  P(A) = \frac{N(A)}{N(\Omega)}
+\end{equation}
+
+    - For example, in the picture below. Suppose that the outer box denotes the sample space, and each circle represents an outcome, which are all equally likely. The the probability of event A, which contains six outcomes, is: $P(A) = \frac{N(A)}{N(\Omega)} = \frac{6}{24} = \frac{1}{4}$
+    
+```{r, echo=FALSE, out.width = "30%", fig.align = "center"}
+knitr::include_graphics("images/p1.png")
+```
+
+
+- **Disjoint events**: The events $A$ and $B$ are disjoint if $A \cap B = \emptyset$
+    - Events A and B, as in the picture above, are disjoint events.
+    
+- **Probability Axioms**
+    1. Probability of any event is non-negative
+    $$P(A) \geq 0$$
+    2. Probability that one of the outcomes in the sample space occurs is 1
+    $$P(\Omega) = 1$$
+    3. \textcolor{red}{Addition Rule}: If events $A$ and $B$ are *mutually exclusive*, then
+    $$P(A\ \text{or}\ B) = P(A) + P(B)$$
+        - As in the picture above, events A and B are mutually exclusive, so: $P(A \text{ or } B) = P(A) + P(B) = \frac{6}{24} + \frac{3}{24} = \frac{3}{8}$
+    
+- **Useful Rules of Probability**
+    1. $P(A) = 1 - P(\text{not } A)$
+    2. \textcolor{red}{Law of Total Probability}: $P(A) = P(A \text{ and } B) + P(A \text{ and not } B)$
+    3. General addition rule: $P(A \text{ or } B) = P(A) + P(B) - P(A \text{ and } B)$
+    
+- **Conditional probability**: If $P(B) \neq 0$, then the conditional probability of event $A$, given event $B$, is:
+  \begin{equation}
+    P(A \mid B) = \frac{P(A \cap B)}{P(B)}
+  \end{equation}
+    - Independent events: The events $A$ and $B$ are independent if and only if: $P(A \cap B) = P(A) P(B) \Rightarrow P(A \mid B) = P(A)$
+    - Law of total probability: $P(A) = P(A \mid B) P(B) + P(A \mid B^c)P(B^c)$
+    - Bayes' Rule: 
+    \begin{equation}
+      P(A \mid B) = \frac{P(B \mid A) P(A)}{P(B)}
+    \end{equation}
+
+## 3. Random Variables and Probability Distribution
+
+- What is a variable?
+    - Unit of analysis: the particular cases we study.
+    - Variable: characteristic in which we are interested. It pertains to cases.
+    - Values: The possible outcomes that a single variable can take.
+    
+- \textcolor{red}{Random variable}: A numerical summary of a random outcome
+
+- **Probability distribution**: Probability of an event that a random variable takes a certain value
+    - Probability density function (PDF): $f(x)$
+    - Probability mass function (PMF): $f(x) = P(X = x)$ *only for discrete random variables*
+    - Cumulative distribution function (CDF): $F(x) = P(X \leq x)$
+    
+- **Bernoulli Distribution**
+    - Bernoulli$(p)$
+    - Parameter: $p$
+    - Only takes two values: $\{0, 1\}$
+    $$X = 
+    \begin{cases}
+      1 \qquad & \text{if success}\\
+      0 \qquad & \text{if failure}
+    \end{cases}$$
+    - PMF: 
+    $$f(x) = P(X = x) = 
+    \begin{cases}
+      p \qquad & \text{if } x = 1\\
+      1-p \qquad & \text{if } x = 0\\
+      0 \qquad & \text{else}
+    \end{cases}$$
+
+- **Binomial Distribution**
+    - Binomial$(n, p)$
+    - Parameters: $n$, $p$
+    - *Generalization* of the Bernoulli distribution ($n$ independent Bernoulli trials)
+    - Takes any values of $0, 1, 2, \dots, n$
+    - PMF:
+    $$P(X = x) = {{n}\choose{x}} p^x (1-p)^{n-x},\ n = 0, 1, 2, \dots, n$$
+    - CDF: 
+    $$F(x) = P(X \leq x) = \sum_{k=0}^{x} {{n} \choose {x}} p^x (1-p)^{n-x} = \sum_{k=0}^{x} \Pr(X = k)\ x = 0,1,2,\dots,n$$
+- **Uniform Distribution**
+    - Uniform$(a,b)$
+    - Parameters: $a$, $b$
+    - PDF:
+      $$f(x) = 
+      \begin{cases}
+      \frac{1}{b-a} \qquad & \text{if } a \leq x \leq b\\
+      0 \qquad &\text{else}
+      \end{cases}$$
+    - CDF: 
+    $$F(x) = \Pr(X \leq x) = 
+    \begin{cases}
+      0 \qquad & \text{if } x < a\\
+      \frac{x-a}{b-a} \qquad & \text{if } a \leq x < b\\
+      1 \qquad &\text{if } x \geq b
+    \end{cases}$$
+- **Normal Distribution**
+    - $\mathcal{N}(\mu, \sigma^2)$
+    - Parameters: $\mu$, $\sigma$
+    - *Standard Normal*: $\mathcal{N}(0, 1)$
+        - If $X \sim \mathcal{N}(\mu, \sigma^2)$, we have $\frac{X - \mu}{\sigma} \sim \mathcal{N}(0,1)$
+
+### 3.1 Simulate Random Variables in R
+
+We can easily simulate a random variables in R, as well as calculating different probabilities of a pre-defined distribution. 
+
+1. **Random draws from a certain distribution**: You can use `rbinom` to make random draws from a Bernoulli or Binomial distribution. For example, we can make one random draw from Bernoulli(p=0.5) by:
+
+```{r}
+set.seed(08540) #set seed to make sure codes are reproducible
+#Draw 1 value from Bernoulli(0.5)
+rbinom(n = 1,
+       size = 1,
+       prob = 0.5)
+```
+
+We can also make multiple draws at once: say we want 5 draws from Bernoulli(p=0.3):
+
+```{r}
+set.seed(08540)
+#Draw 5 values from Bernoulli(0.3)
+rbinom(n = 5,
+       size = 1,
+       prob = 0.3)
+```
+
+And we can make random draws from Binomial distribution by changing the `size` of `rbinom`, say we want to draw from Binomial(n=5, p=0.2):
+
+```{r}
+set.seed(08540)
+#Draw 1 value from Binomial(5, 0.2)
+rbinom(n = 1,
+       size = 5,
+       prob = 0.2)
+```
+
+Similarly, we can use `runif()` to draw from Uniform distribution, and `rnorm()` from Normal distribution.
+
+2. **Calculate probabilities from a certain distribution**: We can also calculate the PMF (PDF) or CDF from a certain distribution. For example, say we want to calculate $P(X=3)$, where $X \sim \text{Binomial}(5, 0.4)$. Using the formula of Binomial PMF, we now that:
+
+$$P(X=3) = {5 \choose 3} \times 0.4^3 \times (1-0.4)^{(5-3)} = 0.2304$$
+We can also calculate this with `dbinom()` like below:
+
+```{r}
+dbinom(x = 3,
+       size = 5,
+       prob = 0.4)
+```
+
+Similarly, we can use `dunif()` and `dnorm()` to calculate the PDF of Uniform and Normal distribution.
+
+In addition, CDF can be calculated with `pbinom()`, `punif()` and `pnorm()`.
+
+```{r}
+#Calculate P(X <= 3) 
+pbinom(q = 3,
+       size = 5,
+       prob = 0.4)
+```
+
+
+## 4. Expectation and Variance
+
+- Population vs. Sample
+    - \textcolor{red}{Population}: all the cases or units of analysis in which we are interested
+    - \textcolor{red}{Sample}: a subset that we draw from the population in order to learn about the population
+    - \textcolor{red}{Inference}: the process by which we use data from the sample to learn or infer the characteristics of the population
+    
+- Population-level features
+    - **Expectation**: 
+        - Discrete R.V.: $E[X] = \sum_{x} x \Pr(X = x)$
+        - Continuous R.V.: $E[X] = \int_{a}^{b} x \cdot f(x) dx$
+    - **Variance**: $\sigma_X^2 = \text{Var}(X) = E[(X - \mu_X)^2] = E[X^2] - \{E[X]\}^2$
+
+- Sample-level features
+    - **Sample mean**: $\bar{X} = \frac{1}{N} \sum_{i=1}^{N} X_i$
+    - **Sample variance**: $s^2 = \frac{1}{N} \sum_{i=1}^{N} (X_i - \bar{X})^2$
+    
+- \textcolor{red}{Law of Large Numbers}: As the number of trials $n$ gets largers, the sample mean $\bar{X}$ will be close to the population mean (expectation) $E[X]$.
+
+- **Z-score**: $\text{z-score of } x_i = \frac{x_i - \bar{x}}{S_x}$
+
+- \textcolor{red}{Central Limit Theorem (CLT)}: Suppose we have a random sample of $n$ i.i.d. units : $(X_i)_{i=1}^{n}$ from a population with expectation $E[X]$ and variance $V(X)$:
+
+  $$\frac{\bar{X}_n - E[X]}{\sqrt{V(X)/n}} \to_d \mathcal{N}(0,1)$$
