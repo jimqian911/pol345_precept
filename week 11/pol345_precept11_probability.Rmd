@@ -205,5 +205,142 @@ pbinom(q = 3,
 - **Z-score**: $\text{z-score of } x_i = \frac{x_i - \bar{x}}{S_x}$
 
 - \textcolor{red}{Central Limit Theorem (CLT)}: Suppose we have a random sample of $n$ i.i.d. units : $(X_i)_{i=1}^{n}$ from a population with expectation $E[X]$ and variance $V(X)$:
-
   $$\frac{\bar{X}_n - E[X]}{\sqrt{V(X)/n}} \to_d \mathcal{N}(0,1)$$
+  
+    - Note that $\frac{\bar{X}_n - E[X]}{\sqrt{V(X)/n}}$ is the *Z-score of the sample mean*
+    - So CLT says the Z-score of the sample mean *converge in distribution* to the standard Normal.
+    - Note that $V(X)$ is the variance of the sample, and $\sqrt{V(X)/n}$ is the standard error of the sample mean.
+    
+- \textcolor{red}{Standard Error}: estimated standard deviation of the sampling distribution
+    - If our estimator is the sample mean $\bar{X} = \frac{1}{N} \sum_{i=1}^{N} X_i$, the standard error $\sqrt{Var(\bar{X})} = \frac{\sqrt{Var(X)}}{N}$
+    - Proof (just for reference)
+    \begin{align*}
+      Var(\bar{X}) %= Var(\frac{1}{N} \sum_{i=1}^{N} X_i)\\
+      &= \frac{1}{N^2} Var(\sum_{i=1}^{N} X_i)\\
+      &= \frac{1}{N^2} \sum_{i=1}^{N} Var(X_i)\\
+      &= \frac{1}{N^2} \times N \times Var(X_i)\\
+      &= \frac{Var(X_i)}{N}
+    \end{align*}
+- \textcolor{red}{Confidence Interval}: a range of values that are likely to include the true value of the parameter
+    - *95% confidence interval*: Over repeated sampling, the 95% confidence interval would contain the true value of the parameter 95% of the time.
+    - See a visualization at: https://rpsychologist.com/d3/ci/
+    
+**Example: 95% CI of the sample mean estimator**
+
+- By CLT, we know that:
+$$\frac{\bar{X}_n - E[X]}{\sqrt{V(X)/n}} \to_d \mathcal{N}(0,1)$$
+- where 
+    - $\bar{X}_n$ is the sample mean of our sample $\{X_1, \dots, X_n\}$
+    - $E[X] = \mu$ is the population mean (expectation), *the value we want to estimate*
+    - $V(X) = \sigma^2$ is the population variance, *which we don't know*
+- we use the sample variance $s^2 = \frac{1}{n-1} \sum_{i=1}^{n} (X_i - \bar{X}_n)^2$ to approximate $\sigma^2$ 
+- With standard Normal, we know that:
+  $$\Pr(-1.96 \leq \frac{\bar{X}_n - E[X]}{\sqrt{V(X)/n}} \leq 1.96) = 0.95$$
+    - Why? Denote $Z \equiv \frac{\bar{X}_n - E[X]}{\sqrt{V(X)/n}}$
+    - By the CDF of standard Normal: $\Pr(Z \leq 1.96) \approx 0.975$, $\Pr(Z \leq -1.96) \approx 0.025$
+    - So $\Pr(-1.96 \leq Z \leq 1.96) \approx 0.975 - 0.025 = 0.95$
+    
+```{r}
+#Prob(Z <= 1.96) 
+pnorm(1.96)
+
+#Prob(Z <= -1.96)
+pnorm(-1.96)
+
+#Prob(-1.96 <= Z <= 1.96)
+pnorm(1.96) - pnorm(-1.96)
+```
+
+
+```{r, echo=FALSE}
+# plot the standard normal density on the interval [-4,4]
+curve(dnorm(x),
+      xlim = c(-4, 4),
+      main = bquote("95% Confidence Interval"),
+      yaxs = 'i',
+      xlab = 'Z-score',
+      ylab = '',
+      lwd = 2,
+      axes = 'F')
+
+# add x-axis
+axis(1, 
+     at = c(-4, -1.96 , 0, 1.96, 4), 
+     padj = 0.75,
+     labels = TRUE)
+
+#alpha = 0.05
+polygon(x = c(-1.96, seq(-1.96, 1.96, 0.01), 1.96),
+        y = c(0, dnorm(seq(-1.96, 1.96, 0.01)),0), 
+        col = 'steelblue')
+
+text(0, 0.1, labels = "Covers 95% of the area")
+
+```
+
+- Re-arrange terms, we have:
+
+\begin{align*}
+  &\Pr(-1.96 \leq \frac{\bar{X}_n - E[X]}{\sqrt{V(X)/n}} \leq 1.96) = 0.95\\
+  &\Pr(-1.96 \times \sqrt{V(X)/n} \leq \bar{X}_n - E[X] \leq 1.96 \times \sqrt{V(X)/n}) = 0.95\\
+  &\Pr(-1.96 \times \sqrt{V(X)/n} - \bar{X}_n \leq - E[X] \leq 1.96 \times \sqrt{V(X)/n} - \bar{X}_n) = 0.95\\
+  &\Pr(1.96 \times \sqrt{V(X)/n} + \bar{X}_n \geq E[X] \geq -1.96 \times \sqrt{V(X)/n} + \bar{X}_n) = 0.95\\
+  &\Pr(\bar{X}_n + 1.96 \times \sqrt{V(X)/n} \geq E[X] \geq \bar{X}_n -1.96 \times \sqrt{V(X)/n}) = 0.95
+\end{align*}
+
+- So the 95% CI is:
+$$[\bar{X}_n -1.96 \times \sqrt{V(X)/n}, \bar{X}_n + 1.96 \times \sqrt{V(X)/n}]$$
+
+- Again, we don't know $V(X)$, and we use $s^2$ to estimate $V(X)$, so the esimated 95% CI is:
+$$[\bar{X}_n -1.96 \times \sqrt{s^2/n}, \bar{X}_n + 1.96 \times \sqrt{s^2/n}]$$
+
+- Note that in R, you can use `var()` to calculate $s^2$
+
+- Now let's calculate the 95% in R:
+
+
+```{r, echo=FALSE}
+set.seed(08540)
+x = rnorm(20)
+```
+
+```{r}
+#Assume we have a sample of 20 numbers stored in object `x`
+x
+
+# 1) Calculate the sample mean
+x.mean = mean(x)
+mean(x)
+
+# 2) Calculate s^2
+x.var = var(x)
+x.var
+
+# 3) Calculate the s.e.
+x.se = sqrt(x.var/length(x))
+x.se
+
+# 4) Calculate the 95% CI
+x.ci = c(x.mean - x.se * 1.96, x.mean + x.se * 1.96)
+x.ci
+```
+
+**Example: Two Independent Samples**
+
+- Say we want to estimate the difference in means of two independent samples $E[X] - E[Y]$
+- The difference in sample means is simply: $\bar{X}_{n_x} - \bar{Y}_{n_y}$
+- The standard error is: $\sqrt{\frac{s_x^2}{n_x} + \frac{s_y^2}{n_y}}$, where
+    - $s_x^2$ and $s_y^2$ are the sample variance of $X$ and $Y$
+    - $n_x$ and $n_y$ are the respective sample sizes
+- So the 95% CI can be estimated by:
+$$\bigg[\bar{X}_{n_x} - \bar{Y}_{n_y} - 1.96 * \sqrt{\frac{s_x^2}{n_x} + \frac{s_y^2}{n_y}}, \bar{X}_{n_x} - \bar{Y}_{n_y} + 1.96 * \sqrt{\frac{s_x^2}{n_x} + \frac{s_y^2}{n_y}}\bigg]$$
+
+**Example: Two Dependent Samples**
+
+- In the previous example, if $X$ and $Y$ are not independent, we need to calculate the standard error by incorporating the *covariance* of $X$ and $Y$. 
+- Suppose $X$ and $Y$ are paired (for example $X$ measures the outcome for each observation at $T=0$ and $Y$ measures the outcome for the same group of observations at $T=1$), the variance of $X-Y$ is given by:
+$$Var(X-Y) = Var(X) + Var(Y) - 2Cov(X,Y)$$
+    - where $Cov(X,Y)$ represents the covariance between $X$ and $Y$, which can be calculated in R using `cov()`. 
+- And the standard error is:
+$$\sqrt{\frac{s_x^2}{n} + \frac{s_y^2}{n} - \frac{2 Cov(X,Y)}{n}}$$
+    - where $n$ represents the sample size (which we assume to be the same for $X$ and $Y$.)
