@@ -1,7 +1,7 @@
 ---
-title: 'POL 345 Prececpt Week 11: Probability and Statistics'
+title: 'POL 345 Prececpt Week 11 & 12: Probability and Statistics'
 author: "Jing Qian"
-date: "2020/04/22"
+date: "2020/04/29"
 output:
   pdf_document: default
   html_document: default
